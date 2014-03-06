@@ -204,9 +204,14 @@ def regionChanged(source):
     # Now that we have everything we need, we can Update the target ROI The
     # 'finish' and 'udpate' arguments are set to False to avoid emitting
     # other signals when modifying the target ROI.
-    target.setRotation(rotation)
-    target.setSize((sizex, sizey), finish=False, update=False)
-    target.setPos(position, finish=False, update=False)
+    try:
+        target.sigRegionChanged.disconnect(regionChanged)
+        target.setRotation(rotation)
+        target.setSize((sizex, sizey), finish=False, update=False)
+        target.setPos(position)
+    finally:
+        target.sigRegionChanged.connect(regionChanged)
+        
 
 # Connect the ROI's regionChanged signals to the method above
 roi1.sigRegionChanged.connect(regionChanged)
